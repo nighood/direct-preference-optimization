@@ -80,8 +80,13 @@ def main(config: DictConfig):
     print('building policy')
     model_kwargs = {'device_map': 'balanced'} if config.trainer == 'BasicTrainer' else {}
     policy_dtype = getattr(torch, config.model.policy_dtype)
+    # model_kwargs['use_auth_token'] = "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"
     policy = transformers.AutoModelForCausalLM.from_pretrained(
-        config.model.name_or_path, cache_dir=get_local_dir(config.local_dirs), low_cpu_mem_usage=True, torch_dtype=policy_dtype, **model_kwargs)
+        config.model.name_or_path,
+        cache_dir=get_local_dir(config.local_dirs),
+        low_cpu_mem_usage=True,
+        torch_dtype=policy_dtype,
+        **model_kwargs)
     disable_dropout(policy)
 
     if config.loss.name in {'dpo', 'ipo'}:
@@ -103,7 +108,7 @@ def main(config: DictConfig):
         print('loaded pre-trained weights')
     
     if 'FSDP' in config.trainer:
-        world_size = torch.cuda.device_count()
+        world_size = torch.cuda.device_count()-1
         print('starting', world_size, 'processes for FSDP training')
         soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
         resource.setrlimit(resource.RLIMIT_NOFILE, (hard, hard))

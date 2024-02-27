@@ -1,0 +1,12 @@
+- model=pythia28
+- datasets=[hh]
+- loss=dpo
+- loss.beta=0.1
+- exp_name=anthropic_dpo_pythia28
+- gradient_accumulation_steps=2
+- batch_size=64
+- eval_batch_size=32
+- trainer=FSDPTrainer
+- sample_during_eval=false
+- model.fsdp_policy_mp=bfloat16
+- model.archive=/mnt/rjy_cache/ziyyang/anthropic_dpo_pythia28_2024-02-22_09-59-27_148088/LATEST/policy.pt

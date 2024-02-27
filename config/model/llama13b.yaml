@@ -1,0 +1,9 @@
+# name_or_path: meta-llama/Llama-2-13b-chat-hf
+name_or_path: /home/ziyyang/.cache/huggingface/hub/models--meta-llama--Llama-2-13b-chat-hf/snapshots/c2f3ec81aac798ae26dcc57799a994dfbf521496
+tokenizer_name_or_path: null
+archive: null
+block_name: LlamaDecoderLayer
+
+policy_dtype: float32
+fsdp_policy_mp: null
+reference_dtype: float16

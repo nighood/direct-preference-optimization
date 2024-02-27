@@ -311,6 +311,7 @@ def get_batch_iterator(names: List[str],
     if silent:
         datasets.logging.disable_progress_bar()
         datasets.logging.set_verbosity_error()
+    print('cache_dir:'+cache_dir)
 
     with TemporarilySeededRandom(seed):
         permutation_seeds = iter(np.random.randint(0, 2**32, size=1000000))
