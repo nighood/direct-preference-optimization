@@ -350,6 +350,7 @@ class BasicTrainer(object):
                         output_dir = os.path.join(self.run_dir, f'step-{self.example_counter}')
                         rank0_print(f'creating checkpoint to write to {output_dir}...')
                         self.save(output_dir, mean_eval_metrics)
+                torch.cuda.empty_cache()
             #### END EVALUATION ####
 
             #### BEGIN TRAINING ####
@@ -358,7 +359,8 @@ class BasicTrainer(object):
             start_time = time.time()
             batch_metrics = defaultdict(list)
             for microbatch_idx in range(self.config.gradient_accumulation_steps):
-                global_microbatch = slice_and_move_batch_for_device(batch, microbatch_idx, self.config.gradient_accumulation_steps, self.rank)
+                # global_microbatch = slice_and_move_batch_for_device(batch, microbatch_idx, self.config.gradient_accumulation_steps, self.rank)
+                global_microbatch = slice_and_move_batch_for_device(batch, microbatch_idx, self.config.gradient_accumulation_steps, None)
                 local_microbatch = slice_and_move_batch_for_device(global_microbatch, self.rank, self.world_size, self.rank)
                 loss, metrics = self.get_batch_metrics(local_microbatch, self.config.loss, train=True)
                 (loss / self.config.gradient_accumulation_steps).backward()
@@ -391,6 +393,7 @@ class BasicTrainer(object):
                 last_log = time.time()
             else:
                 rank0_print(f'skipping logging after {self.example_counter} examples to avoid logging too frequently')
+            torch.cuda.empty_cache()
             #### END TRAINING ####
 
 

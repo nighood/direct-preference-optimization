@@ -182,14 +182,21 @@ def get_android(split: str, silent: bool = False, cache_dir: str = None) -> Dict
        For this dataset, the sft_target is just the chosen response.
     """
     print(f'Loading Android dataset ({split} split) from Local...')
-    file_path = "/home/superbench/jiyuanren/android_dataset/dataset_dpo_prompt_rejected_with_langchain.json"
+    file_path = "/home/superbench/jiyuanren/android_dataset/dataset_dpo_deduplication_len1800_promopt.json"
+    # file_path = "/home/superbench/jiyuanren/android_dataset/dataset_dpo_divide_prompt_no_samples.json"
+    # We have 718 pieces of data, and we have 16 set as 'test' data, and 702 set as 'train' data
     with open(file_path, 'r') as file:
         dataset = json.load(file)
-    print('done')
+    if split == 'test':
+        dataset = dataset[:16]
+    else:
+        dataset = dataset[16:]
+    print('done, total:', len(dataset))
 
     data = defaultdict(lambda: defaultdict(list))
     for row in tqdm.tqdm(dataset, desc='Processing Android', disable=silent):
-        prompt = '\n\nHuman: ' + ''.join(row['prompt']) + '\n\nAssistant:'
+        prompt = '\n\nHuman: ' + ''.join([row['prompt'][0],row['prompt'][5]]) + '\n\nAssistant:'
+        # prompt = '\n\nHuman: ' + row['prompt'] + '\n\nAssistant:'
         chosen = row['chosen']
         rejected = row['rejected']
         responses = [chosen, rejected]
