@@ -14,6 +14,11 @@ import socket
 from typing import Optional, Set
 import resource
 
+# from fastchat.train.llama2_flash_attn_monkey_patch import (
+#     replace_llama_attn_with_flash_attn,
+# )
+
+# replace_llama_attn_with_flash_attn()
 
 OmegaConf.register_new_resolver("get_local_run_dir", lambda exp_name, local_dirs: get_local_run_dir(exp_name, local_dirs))
 
@@ -86,6 +91,7 @@ def main(config: DictConfig):
         cache_dir=get_local_dir(config.local_dirs),
         low_cpu_mem_usage=True,
         torch_dtype=policy_dtype,
+        attn_implementation="flash_attention_2",
         **model_kwargs)
     disable_dropout(policy)
 

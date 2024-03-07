@@ -393,6 +393,7 @@ class BasicTrainer(object):
                 last_log = time.time()
             else:
                 rank0_print(f'skipping logging after {self.example_counter} examples to avoid logging too frequently')
+            # del batch
             torch.cuda.empty_cache()
             #### END TRAINING ####
 
@@ -406,14 +407,14 @@ class BasicTrainer(object):
         if dir_name is None:
             dir_name = os.path.join(self.run_dir, f'LATEST')
 
-        os.makedirs(dir_name, exist_ok=True)
-        output_path = os.path.join(dir_name, filename)
-        rank0_print(f'writing checkpoint to {output_path}...')
-        torch.save({
-            'step_idx': step,
-            'state': state,
-            'metrics': metrics if metrics is not None else {},
-        }, output_path)
+            os.makedirs(dir_name, exist_ok=True)
+            output_path = os.path.join(dir_name, filename)
+            rank0_print(f'writing checkpoint to {output_path}...')
+            torch.save({
+                'step_idx': step,
+                'state': state,
+                'metrics': metrics if metrics is not None else {},
+            }, output_path)
     
     def save(self, output_dir: Optional[str] = None, metrics: Optional[Dict] = None):
         """Save policy, optimizer, and scheduler state to disk."""
